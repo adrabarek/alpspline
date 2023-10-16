@@ -1,3 +1,5 @@
+#include "alpspline.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,54 +7,6 @@
 #include "core.h"
 #include "raylib.h"
 #include "raymath.h"
-
-using MallocFn = void*(size_t);
-using ReallocFn = void*(void*, size_t);
-using FreeFn = void(void*);
-
-struct Point3D {
-    float x;
-    float y;
-    float z;
-};
-using Vector3D = Point3D;
-
-struct SplinePoint {
-    Point3D position;
-    Vector3D velocity;
-};
-
-struct CubicSpline {
-    SplinePoint* points;
-    u32 nPoints;
-};
-
-CubicSpline CreateCubicSpline(u32 nPoints, MallocFn mallocFn = malloc) {
-    SplinePoint* points = (SplinePoint*)mallocFn(sizeof(SplinePoint) * nPoints);
-
-    CubicSpline result;
-    result.points = points;
-    result.nPoints = nPoints;
-
-    return result;
-}
-
-void DestroyCubicSpline(CubicSpline* spline, FreeFn freeFn = free) {
-    freeFn(spline->points);
-    spline->points = nullptr;
-    spline->nPoints = 0;
-}
-
-void ChangeNumberOfSplinePoints(CubicSpline* spline, u32 newNPoints,
-                                ReallocFn reallocFn = realloc) {
-    u32 oldNPoints = spline->nPoints;
-    spline->nPoints = newNPoints;
-    spline->points = (SplinePoint*)reallocFn(
-        spline->points, sizeof(SplinePoint) * spline->nPoints);
-    if (oldNPoints < newNPoints) {
-        memset(spline->points + oldNPoints, 0, newNPoints - oldNPoints);
-    }
-}
 
 int main(int argc, char** argv) {
     i32 screenWidth = 1920;
