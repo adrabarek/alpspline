@@ -3,7 +3,7 @@ set -e
 
 mkdir -p bin/
 clang++ -g3 -O0 -std=c++17 -c \
-    -Isrc/include \
+    -Isrc/demo/include \
     -Isrc/ext/raylib \
     -Isrc/ext/imgui \
     -Isrc/ext/rlImGui \
@@ -14,7 +14,7 @@ clang++ \
     bin/ext/imgui_all.o \
     -Lbin/ext -lraylib -lpthread -ldl \
     -o bin/demo
-cp -rv src/resources bin/resources
+cp -rv src/resources bin/
 pushd bin/
 ./demo
 popd
