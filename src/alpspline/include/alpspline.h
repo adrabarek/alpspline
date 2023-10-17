@@ -6,11 +6,13 @@ using ReallocFn = void*(void*, size_t);
 using FreeFn = void(void*);
 
 using u32 = uint32_t;
+using f32 = float;
+using f64 = double;
 
 struct Point3D {
-    float x;
-    float y;
-    float z;
+    f64 x;
+    f64 y;
+    f64 z;
 };
 using Vector3D = Point3D;
 
@@ -28,3 +30,14 @@ CubicSpline CreateCubicSpline(u32 nPoints, MallocFn mallocFn = malloc);
 void DestroyCubicSpline(CubicSpline* spline, FreeFn freeFn = free);
 void ChangeNumberOfSplinePoints(CubicSpline* spline, u32 newNPoints,
                                 ReallocFn reallocFn = realloc);
+Point3D Evaluate(CubicSpline* spline, f64 param);
+
+// PRIVATE, move to .cpp after testing.
+struct ParamToArcLengthTable {
+    f64 stepSize;
+    f64* arcLengths;
+    u32 nSteps;
+};
+ParamToArcLengthTable MapParamsToArcLength(CubicSpline* spline,
+                                                  f64 stepSize,
+                                                  MallocFn mallocFn = malloc);

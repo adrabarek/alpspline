@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "core.h"
 #include "raylib.h"
@@ -19,11 +18,11 @@ int main(int argc, char** argv) {
 
     CubicSpline spline = CreateCubicSpline(2);
     spline.points[0] = (SplinePoint){
-        (Point3D){300, 700, 0},
-        (Vector3D){100, 100},
+        (Point3D){300, 500, 0},
+        (Vector3D){100, 0},
     };
     spline.points[1] =
-        (SplinePoint){(Point3D){1233, 725, 0}, (Vector3D){100, 100}};
+        (SplinePoint){(Point3D){1300, 500, 0}, (Vector3D){100, 0}};
 
     float* selectedVector = nullptr;
     while (!WindowShouldClose()) {
@@ -43,6 +42,14 @@ int main(int argc, char** argv) {
 
             if (IsKeyPressed(KEY_D) && spline.nPoints > 2) {
                 ChangeNumberOfSplinePoints(&spline, spline.nPoints - 1);
+            }
+
+            if (IsKeyPressed(KEY_T)) {
+                f64 stepSize = 0.001;
+                ParamToArcLengthTable palt = MapParamsToArcLength(&spline, stepSize);
+                for (i32 i = 0; i < palt.nSteps; ++i) {
+                    TraceLog(LOG_INFO, "%d: %f -> %f", i, (i + 1)*palt.stepSize, palt.arcLengths[i]);
+                }
             }
 
             {  // Handle changing points position etc.
@@ -85,8 +92,8 @@ int main(int argc, char** argv) {
             Vector3D velocity = spline.points[i].velocity;
             DrawCircle(position.x, position.y, 10, GRAY);
             DrawLineEx(
-                (Vector2){position.x, position.y},
-                (Vector2){position.x + velocity.x, position.y + velocity.y},
+                (Vector2){(f32)position.x, (f32)position.y},
+                (Vector2){(f32)(position.x + velocity.x), (f32)(position.y + velocity.y)},
                 3.0f, PURPLE
                 );
         }
@@ -95,22 +102,9 @@ int main(int argc, char** argv) {
         u32 nDrawn = 100 * spline.nPoints;
         float step = ((spline.nPoints - 1) * 1.0f) / (float)nDrawn;
         for (i32 i = 0; i < nDrawn; ++i) {
-            SplinePoint sp0 = spline.points[(u32)t];
-            SplinePoint sp1 = spline.points[(u32)t + 1];
-            Point3D p0 = sp0.position;
-            Vector3D v0 = sp0.velocity;
-            Point3D p1 = sp1.position;
-            Vector3D v1 = sp1.velocity;
+            Point3D pointOnSpline = Evaluate(&spline, t);
 
-            float subT = t - (u32)t;
-            float h00 = (1 + 2 * subT) * (1 - subT) * (1 - subT);
-            float h11 = subT * (1 - subT) * (1 - subT);
-            float h01 = subT * subT * (3 - 2 * subT);
-            float h10 = subT * subT * (subT - 1);
-            float x = h00 * p0.x + h10 * v1.x + h01 * p1.x + h11 * v0.x;
-            float y = h00 * p0.y + h10 * v1.y + h01 * p1.y + h11 * v0.y;
-
-            DrawCircle(x, y, 2, BLACK);
+            DrawCircle(pointOnSpline.x, pointOnSpline.y, 2, BLACK);
 
             t += step;
         }
