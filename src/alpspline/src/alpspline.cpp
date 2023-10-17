@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 static f64 PointArcLength(CubicSpline* spline, f64 param) {
-    f64 h = DBL_EPSILON;
+    f64 h = 5e-7;
     f64 twoH = 2.0 * h;
     Point3D p0 = Evaluate(spline, param - h);
     Point3D p1 = Evaluate(spline, param + h);
@@ -27,9 +27,10 @@ ParamToArcLengthTable MapParamsToArcLength(CubicSpline* spline,
     pToAL.stepSize = stepSize;
     pToAL.arcLengths = (f64*)mallocFn(sizeof(f64) * pToAL.nSteps);
 
-    f64 t = 0.0f;
-    f64 arcLength = 0.0f;
+    f64 t = 0.0;
+    f64 arcLength = 0.0;
     u32 index = 0;
+
     while (t < maxT) {
         f64 leftValue = PointArcLength(spline, t);
         f64 midValue = PointArcLength(spline, t + stepSize * 0.5);
@@ -38,7 +39,7 @@ ParamToArcLengthTable MapParamsToArcLength(CubicSpline* spline,
         f64 midArea = midValue * stepSize;
         f64 trapArea = 0.5 * (leftValue + rightValue) * stepSize;
 
-        arcLength += (2.0f * midArea + trapArea) / 3.0f;
+        arcLength += (2.0 * midArea + trapArea) / 3.0;
 
         pToAL.arcLengths[index] = arcLength;
 
@@ -84,7 +85,6 @@ void ChangeNumberOfSplinePoints(CubicSpline* spline, u32 newNPoints,
 }
 
 Point3D Evaluate(CubicSpline* spline, f64 param) {
-    // printf("Evaluating param: %f\n", param);
     u32 paramFloor = (u32)param;
     SplinePoint sp0 = spline->points[paramFloor];
     SplinePoint sp1 = spline->points[paramFloor + 1];

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <float.h>
+
 #include "core.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -24,7 +26,7 @@ int main(int argc, char** argv) {
     spline.points[1] =
         (SplinePoint){(Point3D){1300, 500, 0}, (Vector3D){100, 0}};
 
-    float* selectedVector = nullptr;
+    f64* selectedVector = nullptr;
     while (!WindowShouldClose()) {
         {
             // Handle adding and deleting spline points.
@@ -48,7 +50,7 @@ int main(int argc, char** argv) {
                 f64 stepSize = 0.001;
                 ParamToArcLengthTable palt = MapParamsToArcLength(&spline, stepSize);
                 for (i32 i = 0; i < palt.nSteps; ++i) {
-                    TraceLog(LOG_INFO, "%d: %f -> %f", i, (i + 1)*palt.stepSize, palt.arcLengths[i]);
+                    TraceLog(LOG_INFO, "%d: %f -> %g", i, (i + 1)*palt.stepSize, palt.arcLengths[i]);
                 }
             }
 
@@ -67,10 +69,10 @@ int main(int argc, char** argv) {
                         i32 vGrabY = position.y + velocity.y;
                         if (abs(mousePosition.x - vGrabX) < 20 &&
                             abs(mousePosition.y - vGrabY) < 20) {
-                            selectedVector = (float*)&spline.points[i].velocity;
+                            selectedVector = (f64*)&spline.points[i].velocity;
                         } else if (abs(mousePosition.x - position.x) < 20 &&
                                    abs(mousePosition.y - position.y) < 20) {
-                            selectedVector = (float*)&spline.points[i].position;
+                            selectedVector = (f64*)&spline.points[i].position;
                         }
                     }
                 }
