@@ -30,7 +30,18 @@ CubicSpline CreateCubicSpline(u32 nPoints, MallocFn mallocFn = malloc);
 void DestroyCubicSpline(CubicSpline* spline, FreeFn freeFn = free);
 void ChangeNumberOfSplinePoints(CubicSpline* spline, u32 newNPoints,
                                 ReallocFn reallocFn = realloc);
-Point3D Evaluate(CubicSpline* spline, f64 param);
+Point3D Interpolate(CubicSpline* spline, f64 param);
+
+struct ALPSpline {
+    SplinePoint* points;
+    f64 subSplineLength;
+    u32 nPoints;
+};
+
+ALPSpline CreateALPSpline(CubicSpline* sourceSpline, MallocFn mallocFn = malloc);
+void DestroyALPSpline(ALPSpline* spline, FreeFn freeFn = free);
+Point3D InterpolateByParam(ALPSpline* spline, f64 param);
+Point3D InterpolateByArcLength(ALPSpline* spline, f64 arcLength);
 
 // PRIVATE, move to .cpp after testing.
 struct ParamToArcLengthTable {
@@ -38,6 +49,6 @@ struct ParamToArcLengthTable {
     f64* arcLengths;
     u32 nSteps;
 };
-ParamToArcLengthTable MapParamsToArcLength(CubicSpline* spline,
-                                                  f64 stepSize,
-                                                  MallocFn mallocFn = malloc);
+ParamToArcLengthTable MapParamsToArcLength(CubicSpline* spline, f64 stepSize, MallocFn mallocFn = malloc);
+f64 ParamToArcLength(ParamToArcLengthTable* palt, f64 param);
+bool ArcLengthToParam(ParamToArcLengthTable* palt, f64 arcLength, f64* outParam);
