@@ -38,7 +38,7 @@ struct ALPSpline {
     u32 nPoints;
 };
 
-ALPSpline CreateALPSpline(CubicSpline* sourceSpline, MallocFn mallocFn = malloc);
+ALPSpline CreateALPSpline(CubicSpline* sourceSpline, u32 nSubSplines = 100, MallocFn mallocFn = malloc);
 void DestroyALPSpline(ALPSpline* spline, FreeFn freeFn = free);
 Point3D InterpolateByParam(ALPSpline* spline, f64 param);
 Point3D InterpolateByArcLength(ALPSpline* spline, f64 arcLength);

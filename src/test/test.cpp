@@ -20,8 +20,8 @@ bool F64Eq(f64 a, f64 b, f64 maxError) {
 
 f64 RandomCoord() {
     f64 randomF64 = (f64)rand()/(f64)RAND_MAX;
-    f64 lower = -5000.0;
-    f64 upper = 5000.0;
+    f64 lower = -100000.0;
+    f64 upper = 100000.0;
     return lower + randomF64*(upper - lower);
 }
 

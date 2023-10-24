@@ -28,13 +28,17 @@ Point3D InterpolateBetweenPoints(SplinePoint* sp0, SplinePoint* sp1, f64 t) {
     return (Point3D){x, y, z};
 }
 
-static Vector3D VelocityAtParam(CubicSpline* spline, f64 param) {
-    f64 twoH = 2.0 * h;
-    Point3D p0 = Interpolate(spline, param - h);
-    Point3D p1 = Interpolate(spline, param + h);
-    f64 dx = (p1.x - p0.x) / twoH;
-    f64 dy = (p1.y - p0.y) / twoH;
-    f64 dz = (p1.z - p0.z) / twoH;
+static Vector3D VelocityAtParam(CubicSpline* spline, f64 t) {
+    f64 h = t == 0.0 ? 5e-12 : sqrt(DBL_EPSILON) * t;
+    volatile f64 tph = t + h;
+    volatile f64 tmh = t - h;
+    f64 dt = tph - tmh;
+    f64 idt = 1 / (tph - tmh);
+    Point3D p0 = Interpolate(spline, tmh);
+    Point3D p1 = Interpolate(spline, tph);
+    f64 dx = (p1.x - p0.x) * idt;
+    f64 dy = (p1.y - p0.y) * idt;
+    f64 dz = (p1.z - p0.z) * idt;
     return (Vector3D){dx, dy, dz};
 }
 
@@ -175,7 +179,7 @@ Point3D Interpolate(CubicSpline* spline, f64 param) {
 
 // --------- ALPSpline --------
 
-ALPSpline CreateALPSpline(CubicSpline* sourceSpline, MallocFn mallocFn) {
+ALPSpline CreateALPSpline(CubicSpline* sourceSpline, u32 nSubSplines, MallocFn mallocFn) {
     ALPSpline alpSpline = {};
 
     f64 stepSize = 0.001;
@@ -183,7 +187,7 @@ ALPSpline CreateALPSpline(CubicSpline* sourceSpline, MallocFn mallocFn) {
 
     f64 sourceSplineLength = palt.arcLengths[palt.nSteps - 1];
 
-    alpSpline.subSplineLength = sourceSplineLength / 100.0;
+    alpSpline.subSplineLength = sourceSplineLength / (f64) nSubSplines;
     alpSpline.nPoints = (u32)(sourceSplineLength / alpSpline.subSplineLength) + 1;
     alpSpline.points = (SplinePoint*)mallocFn(sizeof(SplinePoint) * alpSpline.nPoints);
 
@@ -215,7 +219,9 @@ Point3D InterpolateByArcLength(ALPSpline* spline, f64 arcLength) {
     // todo: arcLength out of range
     u32 firstPointIndex = (u32)(arcLength / spline->subSplineLength);
     f32 t = (arcLength - firstPointIndex * spline->subSplineLength) / spline->subSplineLength;
-    return InterpolateBetweenPoints(&spline->points[firstPointIndex], &spline->points[firstPointIndex + 1], t);
+    Point3D result = InterpolateBetweenPoints(&spline->points[firstPointIndex], &spline->points[firstPointIndex + 1], t);
+    // printf("arc length point: %.12f, %.12f, %.12f\n", result.x, result.y, result.z);
+    return result;
 }
 
 Point3D InterpolateByParam(ALPSpline* spline, f64 param) {
