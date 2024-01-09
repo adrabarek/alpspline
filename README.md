@@ -22,7 +22,6 @@ Building the demo requires Clang, git and make, and can only be done on GNU Linu
 This can be done by:
 1. `./build_external.sh` - this will clone and build [Raylib](https://github.com/raysan5/raylib).
 2. `./build_demo.sh` - builds and runs the demo.
-This only works on GNU Linux and requires Clang to be installed on the system.
 
 Demo looks like this:
 ![](resources/demo.gif)
