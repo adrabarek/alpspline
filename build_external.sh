@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
-# GUI libs unity build
-clang++ -c \
-    -Isrc/ext/imgui \
-    -Isrc/ext/raylib \
-    src/ext/imgui_all.cpp \
-    -o bin/ext/imgui_all.o 
+mkdir -p bin/ext
+mkdir -p src/ext
+
+if [ ! -d "src/ext/raylib" ]; then
+    git clone --branch "5.0" https://github.com/raysan5/raylib.git src/ext/raylib
+fi
+
+pushd src/ext/raylib/src
+make clean
+make -j3 PLATFORM=PLATFORM_DESKTOP
+cp libraylib.a ../../../../bin/ext/
+popd

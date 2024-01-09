@@ -6,7 +6,6 @@
 #include "core.h"
 #include "raylib.h"
 #include "raymath.h"
-#include "rlImGui.h"
 
 ALPSpline* RecreateALP(ALPSpline* alp, CubicSpline* spline, u32 nALPpoints) {
     if (alp) {
@@ -33,8 +32,6 @@ int main(int argc, char** argv) {
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "libjam demo");
     SetTargetFPS(60);
-
-    rlImGuiSetup(true);
 
     Color color0 = GetColor(0x3d30a2ff);
     Color color1 = GetColor(0xb15effff);

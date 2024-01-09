@@ -5,9 +5,7 @@ mkdir -p bin/
 clang++ -g3 -O0 -std=c++17 -c \
     -Isrc/demo/include \
     -Isrc/alpspline/include \
-    -Isrc/ext/raylib \
-    -Isrc/ext/imgui \
-    -Isrc/ext/rlImGui \
+    -Isrc/ext/raylib/src \
     src/demo/unity.cpp \
     -o bin/demo.o
 clang++ -g3 -O0 -std=c++17 -c \
@@ -17,7 +15,6 @@ clang++ -g3 -O0 -std=c++17 -c \
 clang++ \
     bin/demo.o \
     bin/alpspline.o \
-    bin/ext/imgui_all.o \
     -Lbin/ext -lraylib -lpthread -ldl \
     -o bin/demo
 cp -rv src/resources bin/
