@@ -15,14 +15,16 @@ it is that if we divide the spline into shorter splines, the shorter splines wil
 
 # Building
 
-The library itself (`src/alpspline`) doesn't need building and can be directly compiled into your project. I only
+The library itself (`src/alpspline`) has no dependencies, doesn't need building and can be directly compiled into your project. I only
 tested in on GNU Linux (Debian), but it should work on other operating systems.
 
-The demo can be built and run by:
-1. `./build_external.sh` - requires make and git; will clone and build [Raylib](https://github.com/raysan5).
+Building the demo requires Clang, git and make, and can only be done on GNU Linux.
+This can be done by:
+1. `./build_external.sh` - this will clone and build [Raylib](https://github.com/raysan5/raylib).
 2. `./build_demo.sh` - builds and runs the demo.
-This only works on GNU Linux and requires make and git.
+This only works on GNU Linux and requires Clang to be installed on the system.
 
-![](https://github.com/drabard/alpspline/resources/demo.gif)
+Demo looks like this:
+![](resources/demo.gif)
 
 
